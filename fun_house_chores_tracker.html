@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>✨ Ultimate Fun Chores Tracker ✨</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap');
+
+  :root {
+    --bg-main: #f0fdfa;
+    --card-bg: #ffffff;
+    --text-primary: #0f172a;
+    --text-muted: #64748b;
+    --border-color: #cbd5e1;
+    
+    --gina-bg: #fdf2f8;
+    --gina-text: #db2777;
+    --gina-border: #fbcfe8;
+    
+    --jack-bg: #f0f9ff;
+    --jack-text: #0284c7;
+    --jack-border: #bae6fd;
+    
+    --both-bg: #f8fafc;
+    --both-text: #475569;
+    --both-border: #e2e8f0;
+    
+    --primary: #8b5cf6;
+    --success: #10b981;
+    --fun-gradient: linear-gradient(135deg, #a855f7, #ec4899, #f43f5e);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  body {
+    background-color: var(--bg-main);
+    background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+    background-size: 20px 20px;
+    color: var(--text-primary);
+    padding: 30px 16px;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  header {
+    background: var(--card-bg);
+    padding: 24px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+    margin-bottom: 30px;
+    border: 2px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 6px;
+    background: var(--fun-gradient);
+  }
+
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    background: var(--fun-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 20px;
+  }
+
+  .filter-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .btn-filter {
+    border: 2px solid var(--border-color);
+    background: #fff;
+    color: var(--text-muted);
+    padding: 8px 18px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 800;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .btn-filter:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+
+  .btn-filter.active {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+  }
+
+  .btn-action {
+    background: #fff;
+    border: 2px solid var(--border-color);
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-action:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+    transform: scale(1.05);
+  }
+
+  /* Section Styling */
+  .section-card {
+    background: var(--card-bg);
+    border-radius: 20px;
+    border: 2px solid var(--border-color);
+    margin-bottom: 30px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s;
+  }
+  
+  .section-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  }
+
+  .section-header {
+    padding: 16px 24px;
+    font-size: 1.3rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--border-color);
+  }
+
+  .sec-weekly { background: #dcfce7; color: #166534; }
+  .sec-biweekly { background: #cffafe; color: #164e63; }
+  .sec-monthly { background: #f3e8ff; color: #581c87; }
+  .sec-seasonal { background: #ffedd5; color: #9a3412; }
+
+  .chore-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 1rem;
+  }
+
+  .chore-table th {
+    padding: 14px;
+    background: #f8fafc;
+    color: var(--text-muted);
+    font-weight: 800;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid var(--border-color);
+  }
+
+  .chore-table td {
+    padding: 16px 14px;
+    border-bottom: 1px dashed var(--border-color);
+    vertical-align: middle;
+  }
+
+  .chore-table tr:last-child td { border-bottom: none; }
+  .chore-table tr:hover td { background-color: #f8fafc; }
+
+  .task-cell {
+    font-weight: 800;
+    color: #1e293b;
+    font-size: 1.1rem;
+  }
+
+  .badge-who {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-align: center;
+    border: 2px solid transparent;
+  }
+  .who-gina { background: var(--gina-bg); color: var(--gina-text); border-color: var(--gina-border); }
+  .who-jack { background: var(--jack-bg); color: var(--jack-text); border-color: var(--jack-border); }
+  .who-both { background: var(--both-bg); color: var(--both-text); border-color: var(--both-border); }
+
+  .badge-cat {
+    display: inline-block;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    background: #f1f5f9;
+    padding: 4px 10px;
+    border-radius: 8px;
+  }
+
+  /* Fun Buttons */
+  .btn-do-it {
+    background: var(--fun-gradient);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 0.95rem;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(236, 72, 153, 0.3);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn-do-it:hover {
+    transform: scale(1.08) rotate(-2deg);
+    box-shadow: 0 6px 15px rgba(236, 72, 153, 0.4);
+  }
+  
+  .btn-do-it:active {
+    transform: scale(0.95);
+  }
+
+  .done-date-badge {
+    display: inline-block;
+    background: #dcfce7;
+    color: #166534;
+    border: 2px solid #86efac;
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 0.9rem;
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  @keyframes popIn {
+    0% { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .log-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    max-width: 250px;
+  }
+
+  .log-pill {
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 99px;
+    border: 1px solid #cbd5e1;
+  }
+
+  .last-done-text {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #0f172a;
+  }
+
+  .empty-state {
+    color: #94a3b8;
+    font-style: italic;
+    font-size: 0.9rem;
+  }
+
+  .text-center { text-align: center; }
+  .hide-row { display: none !important; }
+
+  @media (max-width: 768px) {
+    .table-responsive { overflow-x: auto; }
+  }
+</style>
+<!-- Confetti JS for fun interactions -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="header-top">
+      <h1>🚀 Make Chores Fun Again! 🫧</h1>
+    </div>
+
+    <div class="controls">
+      <div class="filter-group">
+        <button class="btn-filter active" onclick="setFilter('all', this)">🌈 All Chores</button>
+        <button class="btn-filter" onclick="setFilter('Gina', this)">🌸 Gina</button>
+        <button class="btn-filter" onclick="setFilter('Jack', this)">🌊 Jack</button>
+        <button class="btn-filter" onclick="setFilter('Both', this)">🤝 Shared</button>
+      </div>
+      <div class="action-group">
+        <button class="btn-action" onclick="resetAll()">🔄 Reset Progress</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Weekly Section -->
+  <div class="section-card">
+    <div class="section-header sec-weekly">
+      <span>📅 Weekly Maintenance</span>
+      <span style="font-size: 0.9rem; font-weight: normal; opacity: 0.8;">Dynamic Monthly View</span>
+    </div>
+    <div class="table-responsive">
+      <table class="chore-table" id="table-weekly">
+        <thead>
+          <tr id="weekly-header-row">
+            <!-- Headers generated by JS -->
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Bi-Weekly Section -->
+  <div class="section-card">
+    <div class="section-header sec-biweekly">
+      <span>⏳ Every 2 Weeks</span>
+      <span style="font-size: 0.9rem; font-weight: normal; opacity: 0.8;">Stay on top of it!</span>
+    </div>
+    <div class="table-responsive">
+      <table class="chore-table" id="table-biweekly">
+        <thead>
+          <tr>
+            <th style="width: 30%;">Task</th>
+            <th class="text-center" style="width: 10%;">Who</th>
+            <th class="text-center" style="width: 12%;">Category</th>
+            <th class="text-center" style="width: 15%;">Last Done</th>
+            <th class="text-center" style="width: 13%;">Action</th>
+            <th style="width: 20%;">History Log</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Monthly Section -->
+  <div class="section-card">
+    <div class="section-header sec-monthly">
+      <span>🌙 Monthly Deep Cleaning & Care</span>
+      <span style="font-size: 0.9rem; font-weight: normal; opacity: 0.8;">Don't forget the plants! 🪴</span>
+    </div>
+    <div class="table-responsive">
+      <table class="chore-table" id="table-monthly">
+        <thead>
+          <tr>
+            <th style="width: 30%;">Task</th>
+            <th class="text-center" style="width: 10%;">Who</th>
+            <th class="text-center" style="width: 12%;">Category</th>
+            <th class="text-center" style="width: 15%;">Last Done</th>
+            <th class="text-center" style="width: 13%;">Action</th>
+            <th style="width: 20%;">History Log</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Seasonal & Yearly Section -->
+  <div class="section-card">
+    <div class="section-header sec-seasonal">
+      <span>🍂 Seasonal & Annual Maintenance</span>
+      <span style="font-size: 0.9rem; font-weight: normal; opacity: 0.8;">Big tasks, big rewards!</span>
+    </div>
+    <div class="table-responsive">
+      <table class="chore-table" id="table-seasonal">
+        <thead>
+          <tr>
+            <th style="width: 30%;">Task</th>
+            <th class="text-center" style="width: 10%;">Who</th>
+            <th class="text-center" style="width: 10%;">Category</th>
+            <!-- Quarterly tasks get Season columns, Yearly gets standard Action layout, handled dynamically -->
+            <th class="text-center" style="width: 12.5%;">🌸 Spring</th>
+            <th class="text-center" style="width: 12.5%;">☀️ Summer</th>
+            <th class="text-center" style="width: 12.5%;">🍁 Fall</th>
+            <th class="text-center" style="width: 12.5%;">❄️ Winter</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-quarterly"></tbody>
+      </table>
+      
+      <table class="chore-table" id="table-yearly" style="border-top: 4px solid var(--border-color);">
+        <tbody id="tbody-yearly"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+const choresData = {
+  weekly: [
+    { id: "w1", task: "Grocery shopping 🛒", who: "Both", category: "Kitchen" },
+    { id: "w2", task: "Take out litter 🐈", who: "Gina", category: "Cat" },
+    { id: "w3", task: "Take out big trash 🗑️", who: "Gina", category: "General" },
+    { id: "w4", task: "Take out small trash 🗑️", who: "Gina", category: "General" },
+    { id: "w5", task: "Fold clothes and put away 👕", who: "Gina", category: "Laundry" },
+    { id: "w6", task: "Move trash bins out 🚛", who: "Jack", category: "General" },
+    { id: "w7", task: "Water plants 🪴", who: "Jack", category: "General" },
+    { id: "w8", task: "Wash clothes 🧺", who: "Jack", category: "Laundry" }
+  ],
+  biweekly: [
+    { id: "b1", task: "Clean toilet inside 🚽", who: "Gina", category: "Bathroom" },
+    { id: "b2", task: "Wipe counter/sink/faucet 🚰", who: "Gina", category: "Bathroom" },
+    { id: "b3", task: "Wipe stove 🍳", who: "Gina", category: "Kitchen" },
+    { id: "b4", task: "Refill cat dry food 🥣", who: "Jack", category: "Cat" },
+    { id: "b5", task: "Refill cat water 💧", who: "Jack", category: "Cat" },
+    { id: "b6", task: "Cut cat nails ✂️", who: "Jack", category: "Cat" },
+    { id: "b7", task: "Vacuum carpet 🧹", who: "Jack", category: "General" }
+  ],
+  monthly: [
+    { id: "m1", task: "Wipe mirror 🪞", who: "Gina", category: "Bathroom" },
+    { id: "m2", task: "Dust surfaces 🌬️", who: "Gina", category: "General" },
+    { id: "m3", task: "Brush out cat hair from furniture 🛋️", who: "Gina", category: "General" },
+    { id: "m4", task: "Clean shower/tub/tiles 🛁", who: "Jack", category: "Bathroom" },
+    { id: "m5", task: "Clean toilet outside 🧻", who: "Jack", category: "Bathroom" },
+    { id: "m6", task: "Take out compost 🌱", who: "Jack", category: "General" },
+    { id: "m7", task: "Wipe fridge/cabinets 🧊", who: "Jack", category: "Kitchen" },
+    { id: "m8", task: "Mop floor 🪣", who: "Jack", category: "Kitchen" },
+    { id: "m9", task: "Deep clean kitchen sink ✨", who: "Jack", category: "Kitchen" },
+    { id: "m10", task: "Wash bath mats/towels 🛀", who: "Jack", category: "Laundry" },
+    { id: "m11", task: "Wash kitchen towels 🧽", who: "Jack", category: "Laundry" },
+    { id: "m12", task: "Fertilizing plants 🌿", who: "Jack", category: "General" }
+  ],
+  seasonal: [
+    { id: "s1", task: "Clean cat litter robot 🤖", who: "Gina", category: "Cat", type: "Quarterly" },
+    { id: "s2", task: "Order cat supplies 📦", who: "Gina", category: "Cat", type: "Quarterly" },
+    { id: "s3", task: "Wash shower curtain 🚿", who: "Jack", category: "Laundry", type: "Quarterly" },
+    { id: "s4", task: "Wash bedsheets/duvet cover 🛏️", who: "Jack", category: "Laundry", type: "Quarterly" },
+    { id: "y1", task: "Refill containers + soap 🧼", who: "Gina", category: "Kitchen", type: "Yearly" },
+    { id: "y2", task: "Take cat to vet 🩺", who: "Jack", category: "Cat", type: "Yearly" },
+    { id: "y3", task: "Carpet cleaner 🫧", who: "Jack", category: "General", type: "Yearly" },
+    { id: "y4", task: "Wash rugs 🧶", who: "Jack", category: "Laundry", type: "Yearly" }
+  ]
+};
+
+const STORAGE_KEY = 'fun_house_chores_logs';
+let appState = {}; // Structure: { [id]: { log: ['2026-08-17', ...], weekly: { 'Wk1': '2026-08-18' }, quarterly: { 'Spring': '...' } } }
+
+// Fire confetti!
+function shootConfetti(e) {
+  confetti({
+    particleCount: 80,
+    spread: 60,
+    origin: { x: e.clientX / window.innerWidth, y: e.clientY / window.innerHeight },
+    colors: ['#a855f7', '#ec4899', '#10b981', '#f59e0b']
+  });
+}
+
+function getWhoClass(who) {
+  if (who === 'Gina') return 'who-gina';
+  if (who === 'Jack') return 'who-jack';
+  return 'who-both';
+}
+
+function getTodayStr() {
+  const d = new Date();
+  return `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear().toString().slice(-2)}`;
+}
+
+// Generates week headers starting from first Monday of the current month
+function generateWeeksForMonth() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  
+  // Find first day of month
+  let d = new Date(year, month, 1);
+  let day = d.getDay();
+  // Adjust to the Monday of that week
+  let diff = d.getDate() - day + (day === 0 ? -6 : 1);
+  let currentMonday = new Date(d.setDate(diff));
+  
+  let weeks = [];
+  for(let i=0; i<5; i++) {
+    // Break if the 5th week falls entirely in the next month
+    if (i === 4 && currentMonday.getMonth() !== month) break;
+    
+    weeks.push({
+      label: `Wk ${currentMonday.getMonth()+1}/${currentMonday.getDate()}`,
+      id: `wk_${i}`
+    });
+    currentMonday.setDate(currentMonday.getDate() + 7);
+  }
+  return weeks;
+}
+
+const currentWeeks = generateWeeksForMonth();
+
+function initData() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (raw) {
+    try { appState = JSON.parse(raw); } catch(e) { appState = {}; }
+  }
+  // Initialize missing keys
+  [...choresData.weekly, ...choresData.biweekly, ...choresData.monthly, ...choresData.seasonal].forEach(c => {
+    if(!appState[c.id]) {
+      appState[c.id] = { log: [], weekly: {}, quarterly: {} };
+    }
+  });
+}
+
+function renderWeekly() {
+  const headerRow = document.getElementById('weekly-header-row');
+  headerRow.innerHTML = `
+    <th style="width: 30%;">Task</th>
+    <th class="text-center" style="width: 10%;">Who</th>
+    <th class="text-center" style="width: 10%;">Category</th>
+  ` + currentWeeks.map(w => `<th class="text-center">${w.label}</th>`).join('');
+
+  const tbody = document.querySelector('#table-weekly tbody');
+  tbody.innerHTML = choresData.weekly.map(item => `
+    <tr data-who="${item.who}">
+      <td class="task-cell">${item.task}</td>
+      <td class="text-center"><span class="badge-who ${getWhoClass(item.who)}">${item.who}</span></td>
+      <td class="text-center"><span class="badge-cat">${item.category}</span></td>
+      ${currentWeeks.map(w => {
+        const doneDate = appState[item.id].weekly[w.id];
+        if (doneDate) {
+          return `<td class="text-center"><div class="done-date-badge">✓ ${doneDate}</div></td>`;
+        } else {
+          return `<td class="text-center"><button class="btn-do-it" onclick="markWeeklyDone(event, '${item.id}', '${w.id}')">Done!</button></td>`;
+        }
+      }).join('')}
+    </tr>
+  `).join('');
+}
+
+function renderStandardLogTable(tableId, dataArray) {
+  const tbody = document.querySelector(`#${tableId} tbody`);
+  tbody.innerHTML = dataArray.map(item => {
+    const logs = appState[item.id].log || [];
+    const lastDone = logs.length > 0 ? logs[logs.length-1] : null;
+    
+    return `
+    <tr data-who="${item.who}">
+      <td class="task-cell">${item.task}</td>
+      <td class="text-center"><span class="badge-who ${getWhoClass(item.who)}">${item.who}</span></td>
+      <td class="text-center"><span class="badge-cat">${item.category}</span></td>
+      <td class="text-center">
+        ${lastDone ? `<span class="last-done-text">${lastDone}</span>` : `<span class="empty-state">Never</span>`}
+      </td>
+      <td class="text-center">
+        <button class="btn-do-it" onclick="markLogDone(event, '${item.id}')">⚡ Do it!</button>
+      </td>
+      <td>
+        <div class="log-container">
+          ${logs.slice().reverse().map(l => `<span class="log-pill">${l}</span>`).join('')}
+        </div>
+      </td>
+    </tr>
+  `}).join('');
+}
+
+function renderSeasonal() {
+  const qTbody = document.getElementById('tbody-quarterly');
+  const yTbody = document.getElementById('tbody-yearly');
+  
+  const quarterlyTasks = choresData.seasonal.filter(c => c.type === 'Quarterly');
+  const yearlyTasks = choresData.seasonal.filter(c => c.type === 'Yearly');
+  
+  const seasons = ['Spring', 'Summer', 'Fall', 'Winter'];
+
+  qTbody.innerHTML = quarterlyTasks.map(item => `
+    <tr data-who="${item.who}">
+      <td class="task-cell">${item.task}</td>
+      <td class="text-center"><span class="badge-who ${getWhoClass(item.who)}">${item.who}</span></td>
+      <td class="text-center"><span class="badge-cat">${item.category}</span></td>
+      ${seasons.map(season => {
+        const doneDate = appState[item.id].quarterly[season];
+        if (doneDate) {
+          return `<td class="text-center"><div class="done-date-badge">✓ ${doneDate}</div></td>`;
+        } else {
+          return `<td class="text-center"><button class="btn-do-it" onclick="markQuarterlyDone(event, '${item.id}', '${season}')">Done!</button></td>`;
+        }
+      }).join('')}
+    </tr>
+  `).join('');
+
+  yTbody.innerHTML = `
+    <tr><th colspan="6" style="background: transparent; padding-top: 24px;">📅 Annual Tasks (Log-based)</th></tr>
+    <tr>
+        <th style="width: 30%;">Task</th>
+        <th class="text-center" style="width: 10%;">Who</th>
+        <th class="text-center" style="width: 10%;">Category</th>
+        <th class="text-center" style="width: 12.5%;">Last Done</th>
+        <th class="text-center" style="width: 12.5%;">Action</th>
+        <th colspan="2" style="width: 25%;">History Log</th>
+    </tr>
+  ` + yearlyTasks.map(item => {
+    const logs = appState[item.id].log || [];
+    const lastDone = logs.length > 0 ? logs[logs.length-1] : null;
+    
+    return `
+    <tr data-who="${item.who}">
+      <td class="task-cell">${item.task}</td>
+      <td class="text-center"><span class="badge-who ${getWhoClass(item.who)}">${item.who}</span></td>
+      <td class="text-center"><span class="badge-cat">${item.category}</span></td>
+      <td class="text-center">
+        ${lastDone ? `<span class="last-done-text">${lastDone}</span>` : `<span class="empty-state">Never</span>`}
+      </td>
+      <td class="text-center">
+        <button class="btn-do-it" onclick="markLogDone(event, '${item.id}')">🎉 Do it!</button>
+      </td>
+      <td colspan="2">
+        <div class="log-container">
+          ${logs.slice().reverse().map(l => `<span class="log-pill">${l}</span>`).join('')}
+        </div>
+      </td>
+    </tr>
+  `}).join('');
+}
+
+// Action Handlers
+function markWeeklyDone(e, id, weekId) {
+  shootConfetti(e);
+  appState[id].weekly[weekId] = getTodayStr();
+  saveAndRender();
+}
+
+function markQuarterlyDone(e, id, season) {
+  shootConfetti(e);
+  appState[id].quarterly[season] = getTodayStr();
+  saveAndRender();
+}
+
+function markLogDone(e, id) {
+  shootConfetti(e);
+  appState[id].log.push(getTodayStr());
+  saveAndRender();
+}
+
+function saveAndRender() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+  renderWeekly();
+  renderStandardLogTable('table-biweekly', choresData.biweekly);
+  renderStandardLogTable('table-monthly', choresData.monthly);
+  renderSeasonal();
+  applyCurrentFilter();
+}
+
+// Filtering
+let currentFilter = 'all';
+function setFilter(who, btn) {
+  currentFilter = who;
+  document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyCurrentFilter();
+}
+
+function applyCurrentFilter() {
+  document.querySelectorAll('tbody tr').forEach(row => {
+    const rowWho = row.getAttribute('data-who');
+    if (!rowWho) return; // skip headers
+    if (currentFilter === 'all' || rowWho === currentFilter) {
+      row.classList.remove('hide-row');
+    } else {
+      row.classList.add('hide-row');
+    }
+  });
+}
+
+function resetAll() {
+  if (confirm("Reset ALL chores and history? This cannot be undone! 😱")) {
+    appState = {};
+    localStorage.removeItem(STORAGE_KEY);
+    initData();
+    saveAndRender();
+  }
+}
+
+// Startup
+initData();
+saveAndRender();
+</script>
+</body>
+</html>
